@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum DataValue {
     Str(Box<String>),
     Int(Box<i32>),
@@ -73,7 +73,7 @@ impl Default for DataMap {
 
 #[cfg(test)]
 mod tests {
-    use crate::DataValue;
+    use crate::{DataMap, DataValue};
 
     #[test]
     fn test_data_value_instantiation_str() {
@@ -115,5 +115,24 @@ mod tests {
         let d = DataValue::from(41.66132);
         let correct = DataValue::BigFloat(Box::new(41.66132));
         assert_eq!(d, correct);
+    }
+
+    #[test]
+    fn test_datamap() {
+        let mut map = DataMap::new();
+        let value1 = ("value1", DataValue::from(32_i32));
+        let value2 = ("value2", DataValue::from(false));
+        let value3 = ("value3", DataValue::from("My value".to_string()));
+
+        map.insert(value1.0, value1.1.clone());
+        map.insert(value2.0, value2.1.clone());
+        map.insert(value3.0, value3.1.clone());
+
+        let value1_val = map.get(value1.0).unwrap();
+        assert_eq!(*value1_val, value1.1);
+        let value2_val = map.get(value2.0).unwrap();
+        assert_eq!(*value2_val, value2.1);
+        let value3_val = map.get(value3.0).unwrap();
+        assert_eq!(*value3_val, value3.1);
     }
 }
